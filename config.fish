@@ -239,7 +239,16 @@ set -x GTK_IM_MODULE "@im-fcitx"
 set -x QT_IM_MODULE "fcitx"
 set -x DefaultIMModule "fcitx"
 
-eval (ssh-agent -c | sed 's/^echo/#echo/')
+# install keychain, openssh, ssh-agent, ssh-add
+set output (keychain --quiet --eval --agents ssh ~/.ssh/github)
+set output (string replace ' export SSH_AUTH_SOCK;' '' $output)
+set output (string replace 'SSH_AUTH_SOCK=' 'set -x SSH_AUTH_SOCK ' $output)
+set output (string replace ' export SSH_AGENT_PID;' '' $output)
+set output (string replace 'SSH_AGENT_PID=' 'set -x SSH_AGENT_PID ' $output)
+# echo "$output"
+eval "$output"
+
+# haskell 
 set -x PATH $PATH ~/.ghcup/bin
 set -x PATH $PATH ~/.cabal/bin
 
